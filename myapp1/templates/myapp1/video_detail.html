@@ -1,0 +1,33 @@
+{% extends "myapp1/base.html" %}
+{% block title %}{{ video.MovieTitle }}{% endblock %}
+
+{% block content %}
+  <div class="card" style="padding:22px;">
+    <h1 class="title" style="margin:0;">{{ video.MovieTitle }}</h1>
+    <div class="chips mt-2">
+      <span class="chip">🎬 Director: {{ video.DirectorName }}</span>
+      <span class="chip">🧑‍🎤 Actor 1: {{ video.Actor1Name }}</span>
+      <span class="chip">🧑‍🎤 Actor 2: {{ video.Actor2Name|default:"—" }}</span>
+      <span class="chip">🏷️ Genre: {{ video.MovieGenre }}</span>
+      <span class="chip">📅 Year: {{ video.ReleaseYear }}</span>
+      <span class="chip">🆔 ID: {{ video.MovieID }}</span>
+    </div>
+
+    <div class="row mt-3">
+      <a class="btn btn-primary" href="{% url 'video_update' video.pk %}">✏️ Edit <span class="kbd">E</span></a>
+      <a class="btn btn-danger" href="{% url 'video_delete' video.pk %}">🗑️ Delete <span class="kbd">D</span></a>
+      <a class="btn btn-outline" href="{% url 'video_list' %}">↩ Back <span class="kbd">B</span></a>
+    </div>
+  </div>
+
+  <script>
+    // Keyboard shortcuts on detail page: E (edit), D (delete), B (back)
+    document.addEventListener('keydown', (e)=>{
+      if (e.target.closest('input,textarea,select')) return;
+      const k = e.key.toLowerCase();
+      if (k==='e') document.querySelector('a[href*="update"]').click();
+      if (k==='d') document.querySelector('a[href*="delete"]').click();
+      if (k==='b') document.querySelector('a[href*="list"]').click();
+    });
+  </script>
+{% endblock %}

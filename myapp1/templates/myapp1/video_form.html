@@ -1,0 +1,26 @@
+{% extends "myapp1/base.html" %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+  <h1 class="title">{{ title }}</h1>
+
+  <form class="card form" method="post" novalidate>
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    {# Render fields with labels + errors in a clean stack #}
+    {% for field in form %}
+      <div class="field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
+        {{ field }}
+        {% if field.help_text %}<small class="muted">{{ field.help_text }}</small>{% endif %}
+        {% for error in field.errors %}<div class="errors">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+
+    <div class="row mt-2">
+      <button class="btn btn-primary" type="submit">💾 Save</button>
+      <a class="btn btn-outline" href="{% url 'video_list' %}">✖ Cancel</a>
+    </div>
+  </form>
+{% endblock %}

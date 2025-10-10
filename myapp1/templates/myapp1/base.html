@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>{% block title %}App{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg-blue: #e6f7fb;   /* light blue */
+      --bg-green:#e9f7ef;   /* light green */
+      --brand:   #0aa77f;   /* primary green-teal */
+      --brand-2: #0e8fb0;   /* secondary blue-teal */
+      --ink:     #063b37;   /* deep teal text */
+      --ink-soft:#2b6b64;
+      --danger:  #d32f2f;
+      --glass:   rgba(255,255,255,0.65);
+      --ring:    rgba(10,167,127,0.3);
+      --shadow:  0 10px 30px rgba(0,0,0,0.12);
+      --radius:  16px;
+    }
+
+    /* Ambient gradient + floating bubbles */
+    body{
+      margin:0; font-family: Inter, system-ui, Arial, sans-serif; color:var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, var(--bg-blue), transparent 60%),
+        radial-gradient(1000px 600px at 110% 0%, var(--bg-green), transparent 60%),
+        linear-gradient(to right, var(--bg-blue), var(--bg-green));
+      min-height:100svh;
+    }
+
+    .shell{
+      max-width: 1000px; margin: 0 auto; padding: 28px 20px 60px;
+    }
+
+    /* Glass header */
+    .nav{
+      position: sticky; top: 0; z-index: 10;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(to right, rgba(230,247,251,0.6), rgba(233,247,239,0.6));
+      border-bottom: 1px solid rgba(10,167,127,0.15);
+    }
+    .nav-inner{
+      max-width: 1000px; margin: 0 auto; padding: 12px 20px; display:flex; align-items:center; gap:14px;
+    }
+    .logo{
+      font-weight:800; letter-spacing:.3px; color:var(--brand); text-shadow: 0 1px 0 #fff;
+    }
+    .pill{
+      margin-left:auto; border:1px solid rgba(10,167,127,0.25); padding:8px 12px; border-radius:999px; font-size:14px; color:var(--ink-soft);
+      background: linear-gradient(to bottom right, rgba(255,255,255,0.8), rgba(255,255,255,0.55));
+    }
+
+    /* Card */
+    .card{
+      background: var(--glass); backdrop-filter: blur(10px);
+      border: 1px solid rgba(10,167,127,0.18);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    /* Heading */
+    .title{
+      font-size: clamp(26px, 3vw, 34px); margin: 18px 0 14px; color: var(--brand-2);
+      text-shadow: 0 1px 0 #fff;
+    }
+    .muted{ color: #3d7a73; }
+
+    /* Buttons */
+    .btn{ display:inline-flex; align-items:center; gap:8px; border:none; cursor:pointer; text-decoration:none;
+      padding:10px 16px; border-radius:10px; font-weight:600; transition: transform .05s ease, box-shadow .2s ease;
+      box-shadow: 0 6px 16px rgba(14,143,176,0.18); }
+    .btn:hover{ transform: translateY(-1px); }
+    .btn:active{ transform: translateY(0); }
+    .btn-primary{ background: linear-gradient(180deg, #11caa0, #0aa77f); color:#fff; }
+    .btn-outline{ background:#fff; color:var(--brand); border:1px solid rgba(10,167,127,0.3); }
+    .btn-danger{ background: linear-gradient(180deg, #f26a6a, #d32f2f); color:#fff; box-shadow: 0 6px 16px rgba(211,47,47,0.22); }
+
+    /* Table */
+    .table-wrap{ overflow:auto; border-radius: 12px; }
+    table{ width:100%; border-collapse:collapse; background:#fff; }
+    th, td{ padding:14px 16px; border-bottom:1px solid rgba(10,167,127,0.12); text-align:left; }
+    th{
+      position: sticky; top:0; background: linear-gradient(to bottom, #0aa77f, #0e8fb0);
+      color:#fff; font-weight:700; letter-spacing:.2px;
+      cursor:pointer; user-select:none;
+    }
+    tr:hover td{ background:#f2fbf7; }
+
+    /* Inputs */
+    .form{
+      padding: 22px; display:grid; gap:14px;
+    }
+    .field{ display:grid; gap:6px; }
+    .field label{ font-weight:600; color: var(--ink-soft); }
+    .field input, .field select, .field textarea{
+      width:100%; padding:12px 12px; border-radius:10px; border:1px solid rgba(10,167,127,0.25); background:#fff; color:var(--ink);
+      outline: none; box-shadow: 0 0 0 0 var(--ring);
+    }
+    .field input:focus, .field select:focus, .field textarea:focus{
+      box-shadow: 0 0 0 4px var(--ring);
+    }
+    .errors{ color:#b00020; font-size:14px; }
+
+    /* Chips */
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; }
+    .chip{ padding:6px 10px; border-radius:999px; background:#e8fffa; border:1px solid rgba(10,167,127,0.2); color:var(--ink-soft); font-size:12px; }
+
+    /* Hero */
+    .hero{
+      display:grid; gap:14px; padding:22px; align-items:center;
+      grid-template-columns: 120px 1fr; 
+    }
+    .poster{
+      width:120px; aspect-ratio: 2/3; border-radius: 12px; background:
+        linear-gradient(160deg, rgba(14,143,176,0.15), rgba(10,167,127,0.15)),
+        url('https://upload.wikimedia.org/wikipedia/commons/6/65/No-Image-Placeholder.svg');
+      background-size: cover; background-position: center; border:1px solid rgba(10,167,127,0.2);
+    }
+
+    /* Modal (for delete confirm if used inline) */
+    .modal-backdrop{ position:fixed; inset:0; background: rgba(0,0,0,0.35); display:none; align-items:center; justify-content:center; }
+    .modal{ width:min(520px, 92vw); }
+    .modal-backdrop.show{ display:flex; }
+
+    /* Utility */
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .sp-between{ justify-content: space-between; }
+    .mt-2{ margin-top:8px; } .mt-3{ margin-top:16px; } .mt-4{ margin-top:24px; }
+    .center{ text-align:center; }
+    .empty{ padding:40px; text-align:center; font-style:italic; color:#3d7a73; background:#fff; border-radius:12px; border:1px dashed rgba(10,167,127,0.3); }
+    .kbd{ font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; background:#e8fffa; border:1px solid rgba(10,167,127,0.3); padding:2px 6px; border-radius:6px; }
+
+    @media (max-width: 640px){
+      .hero{ grid-template-columns: 1fr; }
+      .poster{ justify-self:center; }
+    }
+  </style>
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <div class="nav">
+    <div class="nav-inner">
+      <div class="logo">🎬 Greenwave</div>
+      <div class="pill">Light blue & green UI</div>
+    </div>
+  </div>
+
+  <div class="shell">
+    {% block content %}{% endblock %}
+  </div>
+
+  {% block scripts %}
+  <script>
+    // Simple table sorter + filter (used on list page)
+    function bindTableTools(){
+      const table = document.querySelector('table[data-sortable]');
+      if(!table) return;
+
+      // Filter
+      const search = document.querySelector('#q');
+      if(search){
+        search.addEventListener('input', () => {
+          const term = search.value.toLowerCase();
+          table.querySelectorAll('tbody tr').forEach(tr=>{
+            const hit = tr.textContent.toLowerCase().includes(term);
+            tr.style.display = hit ? '' : 'none';
+          });
+        });
+      }
+
+      // Sort
+      table.querySelectorAll('th').forEach((th, idx) => {
+        th.addEventListener('click', ()=>{
+          const rows = Array.from(table.querySelectorAll('tbody tr')).filter(r=>r.style.display!=='none');
+          const asc = !th.dataset.asc;
+          rows.sort((a,b)=>{
+            const av = a.children[idx].innerText.trim();
+            const bv = b.children[idx].innerText.trim();
+            const na = +av, nb = +bv;
+            const cmp = (isFinite(na)&&isFinite(nb)) ? (na-nb) : av.localeCompare(bv);
+            return asc ? cmp : -cmp;
+          });
+          th.dataset.asc = asc ? '1':'';
+          rows.forEach(r=>table.querySelector('tbody').appendChild(r));
+        });
+      });
+    }
+    document.addEventListener('DOMContentLoaded', bindTableTools);
+  </script>
+  {% endblock %}
+</body>
+</html>

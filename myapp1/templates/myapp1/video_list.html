@@ -1,0 +1,38 @@
+{% extends "myapp1/base.html" %}
+{% block title %}Videos{% endblock %}
+{% block content %}
+  <h1 class="title">Videos <span class="muted">(library)</span></h1>
+
+  <div class="card" style="padding:18px; margin-bottom:14px;">
+    <div class="row sp-between">
+      <a class="btn btn-primary" href="{% url 'video_create' %}">➕ Add a new video</a>
+      <input id="q" placeholder="Search title, director, genre..." aria-label="Search" style="width:280px; max-width:60vw; padding:10px 12px; border-radius:10px; border:1px solid rgba(10,167,127,0.3)" />
+    </div>
+    <div class="mt-3 table-wrap card" style="border:none;">
+      {% if videos %}
+      <table data-sortable>
+        <thead>
+          <tr>
+            <th>Title ⮁</th>
+            <th>Director ⮁</th>
+            <th>Genre ⮁</th>
+            <th>Year ⮁</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for v in videos %}
+          <tr>
+            <td><a href="{% url 'video_detail' v.pk %}" class="btn btn-outline" style="padding:6px 10px;">{{ v.MovieTitle }}</a></td>
+            <td>{{ v.DirectorName }}</td>
+            <td>{{ v.MovieGenre }}</td>
+            <td>{{ v.ReleaseYear }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+        <div class="empty">No videos yet. Click “Add a new video” to create your first entry.</div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
