@@ -20,6 +20,6 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('videos/', include('myapp1.urls')),
+    path('videos/', include('videos.urls')),
     path('admin/', admin.site.urls),  # you won't use admin for CRUD per assignment
 ]
